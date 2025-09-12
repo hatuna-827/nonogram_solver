@@ -1,4 +1,5 @@
 def main():
+  # get size
   height,width=map(int,input().split())
   # create grid
   grid=[]
@@ -10,10 +11,8 @@ def main():
   H=[]
   H_sum=0
   for h in range(height):
-    print(list(map(int,input().split())))
-    # H.append(list(map(int,input().split())))
-    # H_sum+=sum(H[h])
-  exit()
+    H.append(list(map(int,input().split())))
+    H_sum+=sum(H[h])
   # create W & W_sum
   W=[]
   W_sum=0
@@ -26,6 +25,8 @@ def main():
     print("Height Sum",H_sum)
     print("Width Sum",W_sum)
     exit()
+
+  # make H_temp & W_temp
   # H_temp=[]
   # for h in range(height):
   #   H_temp.append(genlist(len(H[h])+1,width-sum(H[h])-len(H[h])+1))
@@ -35,48 +36,54 @@ def main():
   # print("H_temp",H_temp)
   # print("W_temp",W_temp)
 
+  # fill line
   # for h in range(height):
-  #   if sum(H[h])+len(H[h])-1==width:
-  #     fill(grid,h,0,h,H[h][0]-1,"#")
-  #     for i in range(1,len(H[h])):
-  #       fill(grid,h,sum(H[h][0:i])+i,h,sum(H[h][0:i+1])+i-1,"#")
-  #       fill(grid,h,sum(H[h][0:i])+i-1,h,sum(H[h][0:i])+i-1,".")
-  # for w in range(width):
-  #   if sum(W[w])+len(W[w])-1==height:
-  #     fill(grid,0,w,W[w][0]-1,w,"#")
-  #     for i in range(1,len(W[w])):
-  #       fill(grid,sum(W[w][0:i])+i,w,sum(W[w][0:i+1])+i-1,w,"#")
-  #       fill(grid,sum(W[w][0:i])+i-1,w,sum(W[w][0:i])+i-1,w,".")
+  #   Hb=H[h]
+  #   Hw=H_temp[h]
+  #   if len(Hw)==1:
+  #     Hw=Hw[0]
+  #     fill(grid,h,0,h,Hw[0]-1,".")
+  #     for i in range(1,len(Hw)):
+  #       fill(grid,h,sum(Hw[0:i])+sum(Hb[0:i-1])-1,h,sum(Hw[0:i])+sum(Hb[0:i])-1,"#")
+  #       fill(grid,h,sum(Hw[0:i])+sum(Hb[0:i]),h,sum(Hw[0:i+1])+sum(Hb[0:i]),".")
 
-  # for h in range(height):
-  #   Hb=H_temp[h]
-  #   Hf=H[h]
-  #   if len(Hb)==1:
-  #     Hb=Hb[0]
-  #     fill(grid,h,0,h,Hb[0]-1,".")
-  #     for i in range(1,len(Hb)):
-  #       fill(grid,h,sum(Hb[0:i])+sum(Hf[0:i-1])-1,h,sum(Hb[0:i])+sum(Hf[0:i])-1,"#")
-  #       fill(grid,h,sum(Hb[0:i])+sum(Hf[0:i]),h,sum(Hb[0:i+1])+sum(Hf[0:i]),".")
-
+  # fill line DFS
   H_temp=[]
   for h in range(height):
-    list=[0]*len(H[h])+1
-    list[-1]=width-sum(H[h])-len(H[h])+1
-    H_temp.append(list[:])
+    new_list=[0]*(len(H[h])+1)
+    new_list[-1]=width-sum(H[h])-len(H[h])+1
+    H_temp.append(new_list[:])
   print("H_temp",H_temp)
-  # DFS(grid,height,width,H,H_temp,0)
+  DFS(grid,height,width,H,H_temp,0)
 
   print("height",height,"width",width)
   print("H",H)
   print("W",W)
   print_out(grid)
 
-def DFS(grid,height,width,Hf,Hb,node):
-  Hb=Hb[0]
-  fill(grid,node,0,node,Hb[0]-1,".")
-  for i in range(1,len(Hb)):
-    fill(grid,node,sum(Hb[0:i])+sum(Hf[0:i-1])-1,node,sum(Hb[0:i])+sum(Hf[0:i])-1,"#")
-    fill(grid,node,sum(Hb[0:i])+sum(Hf[0:i]),node,sum(Hb[0:i+1])+sum(Hf[0:i]),".")
+def DFS(grid,height,width,Hb_,Hw_,node):
+  # print("--------------------DFS")
+  # print(height,width,Hw_,Hb_,node)
+  # print_out(grid)
+  Hb=Hb_[node]
+  Hw=Hw_[node]
+  for i in range(1,len(Hw)-1):
+    Hw[i]+=1
+  # print("----------- Hb",Hb,"--- Hw",Hw)
+  fill(grid,node,0,node,Hw[0]-1,".")
+  for i in range(1,len(Hw)):
+    # print("index",i)
+    # print(Hb[:i],Hw[:i])
+    fill(grid,node,sum(Hb[:i-1])+sum(Hw[:i]),node,sum(Hb[:i])+sum(Hw[:i])-1,"#")
+    # print(Hb[:i],Hw[:i])
+    fill(grid,node,sum(Hb[:i])+sum(Hw[:i]),node,sum(Hb[:i])+sum(Hw[:i+1])-1,".")
+    # print("index ---")
+  if node<height-1:
+    DFS(grid,height,width,Hb_,Hw_,node+1)
+  else:
+    print("unu ans")
+    print_out(grid)
+    return 0
 
 def genlist(len:int,sum:int):
   result=[]
@@ -95,11 +102,13 @@ def genlist(len:int,sum:int):
   return result
 
 def fill(grid,start_h,start_w,end_h,end_w,content):
-  print("fill",start_h,start_w,end_h,end_w,content)
+  # if start_w==-1:
+  #   start_w=0
   for h in range(start_h,end_h+1):
     for w in range(start_w,end_w+1):
       if grid[h][w]=="?":
         grid[h][w]=content
+  # print("fill",[start_h,start_w],[end_h,end_w],content)
   # print_out(grid)
   return grid
 
