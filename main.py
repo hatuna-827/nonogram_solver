@@ -27,17 +27,20 @@ def main():
     exit()
 
   # fill line DFS
-  DFS(grid,height,width,H,0)
+  DFS(grid,height,width,H,W,0)
 
   print("height",height,"width",width)
   print("H",H)
   print("W",W)
-  print_out(grid)
+  # print_out(grid)
 
-def DFS(grid,height,width,Hb_,node):
+def DFS(grid,height,width,Hb_,W,node):
+  if check(grid,W):
+    return
   if node==height:
-    print("---------------------")
+    print("----------------------------")
     print_out(grid)
+    print("----------------------------")
     return
   Hb=Hb_[node]
   for Hw in genlist(len(Hb)+1,width-sum(Hb)-len(Hb)+1):
@@ -49,9 +52,45 @@ def DFS(grid,height,width,Hb_,node):
       fill(grid,node,sum(Hb[:i])+sum(Hw[:i]),node,sum(Hb[:i])+sum(Hw[:i+1])-1,".")
     for i in range(1,len(Hw)-1):
       Hw[i]-=1
-    DFS(grid,height,width,Hb_,node+1)
+    DFS(grid,height,width,Hb_,W,node+1)
+  return
 
-
+def check(grid,W):
+  for w in range(len(W)):
+    w_count=0
+    b_count=0
+    b_sum=sum(W[w])
+    w_sum=len(grid)-b_sum
+    con=0
+    index=-1
+    for h in range(len(grid)):
+      if grid[h][w]=="?":
+        break
+      elif grid[h][w]==".":
+        w_count+=1
+        if w_count>w_sum:
+          print("check out w_count",w,h)
+          print_out(grid)
+          return True
+        if index!=-1 and con!=0 and W[w][index]>con:
+          print("check out con less",w,h)
+          print_out(grid)
+          return True
+        con=0
+      elif grid[h][w]=="#":
+        b_count+=1
+        if b_count>b_sum:
+          print("check out b_count",w,h)
+          print_out(grid)
+          return True
+        if con==0:
+          index+=1
+        con+=1
+        if W[w][index]<con:
+          print("check out con over",w,h)
+          print_out(grid)
+          return True
+  return False
 
 def genlist(len:int,sum:int):
   result=[]
