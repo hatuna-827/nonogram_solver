@@ -25,17 +25,14 @@ def main():
     print("Height Sum",H_sum)
     print("Width Sum",W_sum)
     exit()
-
   # fill line DFS
   DFS(grid,height,width,H,W,0)
-
   print("height",height,"width",width)
   print("H",H)
   print("W",W)
-  # print_out(grid)
 
 def DFS(grid,height,width,Hb_,W,node):
-  if check(grid,W):
+  if check(grid,W,node):
     return
   if node==height:
     print("----------------------------")
@@ -55,7 +52,7 @@ def DFS(grid,height,width,Hb_,W,node):
     DFS(grid,height,width,Hb_,W,node+1)
   return
 
-def check(grid,W):
+def check(grid,W,node):
   for w in range(len(W)):
     w_count=0
     b_count=0
@@ -63,32 +60,32 @@ def check(grid,W):
     w_sum=len(grid)-b_sum
     con=0
     index=-1
-    for h in range(len(grid)):
+    for h in range(node):
       if grid[h][w]=="?":
         break
       elif grid[h][w]==".":
         w_count+=1
         if w_count>w_sum:
-          print("check out w_count",w,h)
-          print_out(grid)
+          # print("check out w_count",w,h,node)
+          # print_out(grid)
           return True
         if index!=-1 and con!=0 and W[w][index]>con:
-          print("check out con less",w,h)
-          print_out(grid)
+          # print("check out con less",w,h,node)
+          # print_out(grid)
           return True
         con=0
       elif grid[h][w]=="#":
         b_count+=1
         if b_count>b_sum:
-          print("check out b_count",w,h)
-          print_out(grid)
+          # print("check out b_count",w,h,node)
+          # print_out(grid)
           return True
         if con==0:
           index+=1
         con+=1
         if W[w][index]<con:
-          print("check out con over",w,h)
-          print_out(grid)
+          # print("check out con over",w,h,node)
+          # print_out(grid)
           return True
   return False
 
@@ -112,8 +109,6 @@ def fill(grid,start_h,start_w,end_h,end_w,content):
   for h in range(start_h,end_h+1):
     for w in range(start_w,end_w+1):
       grid[h][w]=content
-  # print("fill",[start_h,start_w],[end_h,end_w],content)
-  # print_out(grid)
   return grid
 
 def print_out(grid):
