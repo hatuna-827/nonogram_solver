@@ -26,12 +26,14 @@ def main():
     print("Width Sum",W_sum)
     exit()
   # with logic
-  for i in range(4):
+  while True:
+    before=grid[:]
     with_logic(grid,height,width,H)
     grid=[list(x) for x in zip(*grid)]
     with_logic(grid,width,height,W)
     grid=[list(x) for x in zip(*grid)]
-
+    if before==grid:
+      break
   # without logic
   # while True:
   #   if check(grid,W,node):
@@ -53,28 +55,33 @@ def main():
   #       Hw[i]-=1
   #     DFS(grid,height,width,Hb_,W,node+1)
   #   break
-
   print_out(grid)
   print("height",height,"width",width)
   print("H",H)
   print("W",W)
 
-def with_logic(grid,height,width,H):
+def with_logic(grid,height,width,info):
   for h in range(height):
-    Hb=H[h]
-    Hw=genlist(len(Hb)+1,width-sum(Hb)-len(Hb)+1)
-    H_lines=[]
-    for i in range(len(Hw)):
-      H_line=[["?"]*width]
-      H_line=fill_line(H_line,Hb,Hw[i],0)
-      H_lines.append(H_line[0])
+    nothing=True
+    for i in grid[h]:
+      if i=="?":
+        nothing=False
+        break
+    if nothing:
+      continue
+    infoB=info[h]
+    infoW=genlist(len(infoB)+1,width-sum(infoB)-len(infoB)+1)
+    lines=[]
+    for i in range(len(infoW)):
+      line=[["?"]*width]
+      line=fill_line(line,infoB,infoW[i],0)
+      lines.append(line[0])
       for w in range(width):
-        if grid[h][w]!="?" and H_line[0][w]!=grid[h][w]:
-          Hw[i]="@"
-          H_lines[i]="@"
-    Hw=[i for i in Hw if i!="@"]
-    H_lines=[i for i in H_lines if i!="@"]
-    grid[h]=dup(H_lines)
+        if grid[h][w]!="?" and line[0][w]!=grid[h][w]:
+          lines[i]="@"
+          break
+    lines=[i for i in lines if i!="@"]
+    grid[h]=dup(lines)
   return grid
 
 def dup(o):
@@ -99,26 +106,18 @@ def check(grid,W,height):
       elif grid[h][w]==".":
         w_count+=1
         if w_count>w_sum:
-          # print("check out w_count",w,h,height)
-          # print_out(grid)
           return True
-        if index!=-1 and con!=0 and W[w][index]>con:
-          # print("check out con less",w,h,height)
-          # print_out(grid)
+        if con!=0 and index!=-1 and W[w][index]>con:
           return True
         con=0
       elif grid[h][w]=="#":
         b_count+=1
         if b_count>b_sum:
-          # print("check out b_count",w,h,height)
-          # print_out(grid)
           return True
         if con==0:
           index+=1
         con+=1
         if W[w][index]<con:
-          # print("check out con over",w,h,height)
-          # print_out(grid)
           return True
   return False
 
@@ -155,12 +154,12 @@ def fill(grid,start_h,start_w,end_h,end_w,content):
   for h in range(start_h,end_h+1):
     for w in range(start_w,end_w+1):
       grid[h][w]=content
-  # print("fill",start_h,start_w,end_h,end_w,content)
   return grid
 
 def print_out(grid):
   for i in range(len(grid)):
-    print("".join(grid[i]))
+    print(" ".join(grid[i]))
+  return
 
 if __name__=='__main__':
   main()
