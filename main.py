@@ -26,11 +26,21 @@ def main():
     print("Width Sum",W_sum)
     exit()
   # with logic
+  Hb_sum=[]
+  for h in range(len(H)):
+    Hb_sum.append([0])
+    for i in H[h]:
+        Hb_sum[-1].append(Hb_sum[-1][-1]+i)
+  Wb_sum=[]
+  for w in range(len(W)):
+    Wb_sum.append([0])
+    for i in W[w]:
+        Wb_sum[-1].append(Wb_sum[-1][-1]+i)
   while True:
     before=grid[:]
-    with_logic(grid,height,width,H)
+    with_logic(grid,height,width,H,Hb_sum)
     grid=[list(x) for x in zip(*grid)]
-    with_logic(grid,width,height,W)
+    with_logic(grid,width,height,W,Wb_sum)
     grid=[list(x) for x in zip(*grid)]
     if before==grid:
       break
@@ -72,7 +82,7 @@ def without_logic(grid,height,width,H,W):
       # DFS(grid,height,width,H,W,node+1)
     break
 
-def with_logic(grid,height,width,info):
+def with_logic(grid,height,width,info,b_sum):
   for h in range(height):
     nothing=True
     for i in grid[h]:
@@ -86,7 +96,7 @@ def with_logic(grid,height,width,info):
     lines=[]
     for i in range(len(infoW)):
       line=[["?"]*width]
-      line=fill_line(line,infoB,infoW[i],0)
+      line=fill_line(line,b_sum[h],infoW[i],0)
       lines.append(line[0])
       for w in range(width):
         if grid[h][w]!="?" and line[0][w]!=grid[h][w]:
@@ -149,16 +159,13 @@ def genlist(len,sum):
     result.append(list[:])
   return result
 
-def fill_line(grid,Hb,Hw,h):
+def fill_line(grid,Hb_sum,Hw,h):
   for i in range(1,len(Hw)-1):
     Hw[i]+=1
   fill(grid,h,0,h,Hw[0],".")
   Hw_sum=[0]
   for i in range(len(Hw)):
     Hw_sum.append(Hw_sum[-1]+Hw[i])
-  Hb_sum=[0]
-  for i in range(len(Hb)):
-    Hb_sum.append(Hb_sum[-1]+Hb[i])
   for i in range(1,len(Hw)):
     fill(grid,h,Hw_sum[i]+Hb_sum[i-1],h,Hw_sum[i]+Hb_sum[i],"#")
     fill(grid,h,Hw_sum[i]+Hb_sum[i],h,Hw_sum[i+1]+Hb_sum[i],".")
