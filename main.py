@@ -34,31 +34,43 @@ def main():
     grid=[list(x) for x in zip(*grid)]
     if before==grid:
       break
-  # without logic
-  # while True:
-  #   if check(grid,W,node):
-  #     return
-  #   if node==height:
-  #     print("----------------------------")
-  #     print_out(grid)
-  #     print("----------------------------")
-  #     return
-  #   Hb=Hb_[node]
-  #   for Hw in genlist(len(Hb)+1,width-sum(Hb)-len(Hb)+1):
-  #     for i in range(1,len(Hw)-1):
-  #       Hw[i]+=1
-  #     fill(grid,node,0,node,Hw[0]-1,".")
-  #     for i in range(1,len(Hw)):
-  #       fill(grid,node,sum(Hb[:i-1])+sum(Hw[:i]),node,sum(Hb[:i])+sum(Hw[:i])-1,"#")
-  #       fill(grid,node,sum(Hb[:i])+sum(Hw[:i]),node,sum(Hb[:i])+sum(Hw[:i+1])-1,".")
-  #     for i in range(1,len(Hw)-1):
-  #       Hw[i]-=1
-  #     DFS(grid,height,width,Hb_,W,node+1)
-  #   break
+  print("="*(len(grid[0])*2-1))
   print_out(grid)
+  print("="*(len(grid[0])*2-1))
   print("height",height,"width",width)
-  print("H",H)
-  print("W",W)
+  for h in range(height):
+    for w in range(width):
+      if grid[h][w]=="?":
+        break
+    else:
+      continue
+    break
+  else:
+    exit()
+  # without logic
+  # without_logic(grid,H,W)
+
+def without_logic(grid,height,width,H,W):
+  node=0
+  while True:
+    if check(grid,W,node):
+      node-=1
+    if node==height:
+      print_out(grid)
+      print("----------------------------")
+      return
+    Hb=H[node]
+    for Hw in genlist(len(Hb)+1,width-sum(Hb)-len(Hb)+1):
+      for i in range(1,len(Hw)-1):
+        Hw[i]+=1
+      fill(grid,node,0,node,Hw[0],".")
+      for i in range(1,len(Hw)):
+        fill(grid,node,sum(Hb[:i-1])+sum(Hw[:i]),node,sum(Hb[:i])+sum(Hw[:i]),"#")
+        fill(grid,node,sum(Hb[:i])+sum(Hw[:i]),node,sum(Hb[:i])+sum(Hw[:i+1]),".")
+      for i in range(1,len(Hw)-1):
+        Hw[i]-=1
+      # DFS(grid,height,width,H,W,node+1)
+    break
 
 def with_logic(grid,height,width,info):
   for h in range(height):
@@ -140,10 +152,16 @@ def genlist(len,sum):
 def fill_line(grid,Hb,Hw,h):
   for i in range(1,len(Hw)-1):
     Hw[i]+=1
-  fill(grid,h,0,h,Hw[0]-1,".")
+  fill(grid,h,0,h,Hw[0],".")
+  Hw_sum=[0]
+  for i in range(len(Hw)):
+    Hw_sum.append(Hw_sum[-1]+Hw[i])
+  Hb_sum=[0]
+  for i in range(len(Hb)):
+    Hb_sum.append(Hb_sum[-1]+Hb[i])
   for i in range(1,len(Hw)):
-    fill(grid,h,sum(Hw[0:i])+sum(Hb[0:i-1]),h,sum(Hw[0:i])+sum(Hb[0:i])-1,"#")
-    fill(grid,h,sum(Hw[0:i])+sum(Hb[0:i]),h,sum(Hw[0:i+1])+sum(Hb[0:i])-1,".")
+    fill(grid,h,Hw_sum[i]+Hb_sum[i-1],h,Hw_sum[i]+Hb_sum[i],"#")
+    fill(grid,h,Hw_sum[i]+Hb_sum[i],h,Hw_sum[i+1]+Hb_sum[i],".")
   for i in range(1,len(Hw)-1):
     Hw[i]-=1
   return grid
@@ -152,7 +170,7 @@ def fill(grid,start_h,start_w,end_h,end_w,content):
   if start_w==-1:
     start_w=0
   for h in range(start_h,end_h+1):
-    for w in range(start_w,end_w+1):
+    for w in range(start_w,end_w):
       grid[h][w]=content
   return grid
 
