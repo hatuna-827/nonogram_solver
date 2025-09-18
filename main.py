@@ -25,13 +25,6 @@ def main():
     print("Height Sum",H_sum)
     print("Width Sum",W_sum)
     exit()
-  # create Hw & Ww
-  Hw=[]
-  Ww=[]
-  for h in range(height):
-    Hw.append(genlist(len(H[h])+1,width-sum(H[h])-len(H[h])+1))
-  for w in range(width):
-    Ww.append(genlist(len(W[w])+1,width-sum(W[w])-len(W[w])+1))
   # create Hb_sum & Wb_sum
   Hb_sum=[]
   for h in range(len(H)):
@@ -43,12 +36,23 @@ def main():
     Wb_sum.append([0])
     for i in W[w]:
       Wb_sum[-1].append(Wb_sum[-1][-1]+i)
+  # create Hw & Ww
+  H_list=[]
+  for h in range(height):
+    H_list.append(genlist(len(H[h])+1,width-sum(H[h])-len(H[h])+1))
+    for i in range(len(H_list[h])):
+      H_list[h][i]=fill_line([["?"]*width],Hb_sum[h],H_list[h][i],0)[0]
+  W_list=[]
+  for w in range(width):
+    W_list.append(genlist(len(W[w])+1,width-sum(W[w])-len(W[w])+1))
+    for i in range(len(W_list[w])):
+      W_list[w][i]=fill_line([["?"]*height],Wb_sum[w],W_list[w][i],0)[0]
   # with logic
   while True:
     before=grid[:]
-    with_logic(grid,height,width,Hw,Hb_sum)
+    with_logic(grid,height,width,H_list)
     grid=[list(x) for x in zip(*grid)]
-    with_logic(grid,width,height,Ww,Wb_sum)
+    with_logic(grid,width,height,W_list)
     grid=[list(x) for x in zip(*grid)]
     if before==grid:
       break
@@ -81,7 +85,7 @@ def main():
 #       if nothing:
 #         continue
 
-def with_logic(grid,height,width,w_list,b_sum):
+def with_logic(grid,height,width,H):
   for h in range(height):
     nothing=True
     for i in grid[h]:
@@ -90,27 +94,25 @@ def with_logic(grid,height,width,w_list,b_sum):
         break
     if nothing:
       continue
-    infoW=w_list[h]
-    lines=[]
-    for i in range(len(infoW)):
-      line=[["?"]*width]
-      line=fill_line(line,b_sum[h],infoW[i],0)
-      lines.append(line[0])
+    lines=H[h]
+    for i in range(len(lines)):
       for w in range(width):
-        if grid[h][w]!="?" and line[0][w]!=grid[h][w]:
+        if grid[h][w]!="?" and lines[i][w]!=grid[h][w]:
           lines[i]="@"
           break
     lines=[i for i in lines if i!="@"]
+    H[h]=lines
     grid[h]=dup(lines)
   return grid
 
 def dup(o):
-  O=o[0]
-  for i in range(1,len(o)):
-    for w in range(len(O)):
-      if O[w]!="?" and O[w]!=o[i][w]:
-        O[w]="?"
-  return O
+  result=o[0][:]
+  width=len(result)
+  for O in o[1:]:
+    for w in range(width):
+      if result[w]!="?" and result[w]!=O[w]:
+        result[w]="?"
+  return result
 
 def check(grid,W,height):
   for w in range(len(W)):
