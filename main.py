@@ -25,28 +25,36 @@ def main():
     print("Height Sum",H_sum)
     print("Width Sum",W_sum)
     exit()
-  # with logic
+  # create Hw & Ww
+  Hw=[]
+  Ww=[]
+  for h in range(height):
+    Hw.append(genlist(len(H[h])+1,width-sum(H[h])-len(H[h])+1))
+  for w in range(width):
+    Ww.append(genlist(len(W[w])+1,width-sum(W[w])-len(W[w])+1))
+  # create Hb_sum & Wb_sum
   Hb_sum=[]
   for h in range(len(H)):
     Hb_sum.append([0])
     for i in H[h]:
-        Hb_sum[-1].append(Hb_sum[-1][-1]+i)
+      Hb_sum[-1].append(Hb_sum[-1][-1]+i)
   Wb_sum=[]
   for w in range(len(W)):
     Wb_sum.append([0])
     for i in W[w]:
-        Wb_sum[-1].append(Wb_sum[-1][-1]+i)
+      Wb_sum[-1].append(Wb_sum[-1][-1]+i)
+  # with logic
   while True:
     before=grid[:]
-    with_logic(grid,height,width,H,Hb_sum)
+    with_logic(grid,height,width,Hw,Hb_sum)
     grid=[list(x) for x in zip(*grid)]
-    with_logic(grid,width,height,W,Wb_sum)
+    with_logic(grid,width,height,Ww,Wb_sum)
     grid=[list(x) for x in zip(*grid)]
     if before==grid:
       break
-  print("="*(len(grid[0])*2-1))
+  print("="*(width*2-1))
   print_out(grid)
-  print("="*(len(grid[0])*2-1))
+  print("="*(width*2-1))
   print("height",height,"width",width)
   for h in range(height):
     for w in range(width):
@@ -58,31 +66,22 @@ def main():
   else:
     exit()
   # without logic
-  # without_logic(grid,H,W)
+  # without_logic(grid,height,width,H,W)
 
-def without_logic(grid,height,width,H,W):
-  node=0
-  while True:
-    if check(grid,W,node):
-      node-=1
-    if node==height:
-      print_out(grid)
-      print("----------------------------")
-      return
-    Hb=H[node]
-    for Hw in genlist(len(Hb)+1,width-sum(Hb)-len(Hb)+1):
-      for i in range(1,len(Hw)-1):
-        Hw[i]+=1
-      fill(grid,node,0,node,Hw[0],".")
-      for i in range(1,len(Hw)):
-        fill(grid,node,sum(Hb[:i-1])+sum(Hw[:i]),node,sum(Hb[:i])+sum(Hw[:i]),"#")
-        fill(grid,node,sum(Hb[:i])+sum(Hw[:i]),node,sum(Hb[:i])+sum(Hw[:i+1]),".")
-      for i in range(1,len(Hw)-1):
-        Hw[i]-=1
-      # DFS(grid,height,width,H,W,node+1)
-    break
+# def without_logic(grid,height,width,H,W):
+#   stack=[grid]
+#   while len(stack)!=0:
+#     grid=stack.pop()
+#     for h in range(height):
+#       nothing=True
+#       for i in grid[h]:
+#         if i=="?":
+#           nothing=False
+#           break
+#       if nothing:
+#         continue
 
-def with_logic(grid,height,width,info,b_sum):
+def with_logic(grid,height,width,w_list,b_sum):
   for h in range(height):
     nothing=True
     for i in grid[h]:
@@ -91,8 +90,7 @@ def with_logic(grid,height,width,info,b_sum):
         break
     if nothing:
       continue
-    infoB=info[h]
-    infoW=genlist(len(infoB)+1,width-sum(infoB)-len(infoB)+1)
+    infoW=w_list[h]
     lines=[]
     for i in range(len(infoW)):
       line=[["?"]*width]
@@ -182,8 +180,8 @@ def fill(grid,start_h,start_w,end_h,end_w,content):
   return grid
 
 def print_out(grid):
-  for i in range(len(grid)):
-    print(" ".join(grid[i]))
+  for line in grid:
+    print(" ".join(line))
   return
 
 if __name__=='__main__':
