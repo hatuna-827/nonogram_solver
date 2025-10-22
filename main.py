@@ -44,7 +44,7 @@ def main():
       H_list[h][i]=fill_line([["?"]*width],Hb_sum[h],H_list[h][i],0)[0]
   W_list=[]
   for w in range(width):
-    W_list.append(genlist(len(W[w])+1,width-sum(W[w])-len(W[w])+1))
+    W_list.append(genlist(len(W[w])+1,height-sum(W[w])-len(W[w])+1))
     for i in range(len(W_list[w])):
       W_list[w][i]=fill_line([["?"]*height],Wb_sum[w],W_list[w][i],0)[0]
   # with logic
