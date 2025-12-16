@@ -71,66 +71,73 @@
 
 # -------------------------------------------------------------------------------------------------------
 
+
 def print_out(g):
     for value in g:
         for v in value:
             print(v)
 
-hoge=[
-    "##.#.#..",
-    "##.#..#.",
-    "##.#...#",
 
-    "##..#.#.",
-    "##..#..#",
-
-    "##...#.#",
-
-    ".##.#.#.",
-    ".##.#..#",
-
-    ".##..#.#",
-
-    "..##.#.#"
-]
+# hoge = [
+#     "..##.#.#",
+#     ".##..#.#",
+#     "##...#.#",
+#     ".##.#..#",
+#     "##..#..#",
+#     "##.#...#",
+#     ".##.#.#.",
+#     "##..#.#.",
+#     "##.#..#.",
+#     "##.#.#..",
+# ]
 # hoge.reverse()
 # for i in hoge:
 #     print(i)
 
-d = [2, 2, 1]
+d = [1, 1,1]
 width = 8
 
-min=[d[0]]
-for i in d[1:]:
-    min.append(min[-1]+i+1)
-d.reverse()
-max=[width]
-for i in d[:-1]:
-    max.insert(0,max[0]-i-1)
-d.reverse()
+r = width - sum(d) - len(d) + 2
+m = [r-2]
+for i in d:
+    m.append(m[-1] + i + 1)
+m.pop(0)
+print(m)
 
-result=[]
+result = []
 for w in range(width):
     result.append([])
-
-for i in range(len(d)):
-    for s in range(min[i]):
-        print(s)
-        index=s-d[i]
-        print(f"index:{index}")
-        for e in range(s+1):
-            result[index].append("."*e+"#"*d[i]+"."*(s-e))
+for s in range( r):
+    result[s + d[0] - 1].append("." * s + "#" * d[0])
 
 print(result)
-print_out(result)
-exit()
+# exit()
+
+for i in range(1, len(d)):
+    old = result[:]
+    result = []
+    for w in range(width):
+        result.append([])
+    for s in range(1, r + 1):
+        l = s + d[i]
+        c = "." * s + "#" * d[i]
+        for o in range(m[i] - l):
+            for v in old[o]:
+                result[o + l].append(v + c)
+
+for i in range(len(result) - 1):
+    for v in result[i]:
+        result[-1].append(v + "." * (width - i - 1))
+result = result[-1]
+print(result)
+# exit()
 
 # for i in d
 # for r in range(min,max)
 # for i in range(sum(d) - len(d) + 2):
 #     result.append("." * i + "#" * d[0])
 
-for i in range(len(d)):
-    print(i)
+for v in result:
+    print(v)
 
-print(result)
+# print(result)
